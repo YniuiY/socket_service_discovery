@@ -1,0 +1,52 @@
+[
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/main.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/main.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/main.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/common/transfer.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/common/transfer.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/common/transfer.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/tcp/client.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/tcp/client.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/tcp/client.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/tcp/server.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/tcp/server.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/tcp/server.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/udp/udp_client.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/udp/udp_client.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/udp/udp_client.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/udp/udp_server.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/udp/udp_server.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/udp/udp_server.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/unix_socket/stream/client.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/unix_socket/stream/client.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/unix_socket/stream/client.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/unix_socket/stream/server.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/unix_socket/stream/server.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/unix_socket/stream/server.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/service_discovery/service_discovery_master.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/service_discovery/service_discovery_master.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/service_discovery/service_discovery_master.cpp"
+},
+{
+  "directory": "/home/yangdi/test/netwrok/socket_service_discovery/build",
+  "command": "/usr/bin/c++  -I/home/yangdi/test/netwrok/socket_service_discovery/include   -Wall -g -o CMakeFiles/run.dir/src/service_discovery/service_sd.cpp.o -c /home/yangdi/test/netwrok/socket_service_discovery/src/service_discovery/service_sd.cpp",
+  "file": "/home/yangdi/test/netwrok/socket_service_discovery/src/service_discovery/service_sd.cpp"
+}
+]

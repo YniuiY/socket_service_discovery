@@ -47,7 +47,6 @@ void UpdServer::Socket(bool is_multi_cast) {
   if (is_multi_cast && !multi_cast_ip_.empty()) {
     ip_mreq mreq;
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-    // mreq.imr_multiaddr.s_addr = inet_addr(multi_cast_ip_.c_str());
     inet_pton(AF_INET, multi_cast_ip_.c_str(), &mreq.imr_multiaddr.s_addr);
     if (setsockopt(server_socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
       std::cerr << "Add to multicast group failed, " << strerror(errno) << std::endl;
@@ -80,7 +79,6 @@ void UpdServer::recv_data() {
   memset(recv_buffer, 0, sizeof(recv_buffer));
   Packet* pack = reinterpret_cast<Packet*>(recv_buffer);
 
-  client_addr_;
   socklen_t addr_len = sizeof(client_addr_);
   // 接收Packet的header部分
   int recv_data_size = recvfrom(server_socket_, pack, MAX_UDP_DATA_SIZE, 0, (sockaddr*)&client_addr_, &addr_len);

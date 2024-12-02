@@ -16,6 +16,7 @@
 
 #include "common/packet.h"
 #include "udp/udp_client.h" // udp客户端
+#include "udp/udp_server.h" // udp服务端
 #include "unix_socket/stream/server.h" // unix socket服务端
 #include "sd_package/sd_package.h" // 服务发现协议包
 
@@ -51,6 +52,8 @@ class ServiceDiscoveryMaster {
 
   /// @brief: UDP组播客户端
   std::shared_ptr<udp::UdpClient> udp_client_;
+  /// @brief: UDP组播服务端
+  std::shared_ptr<udp::UpdServer> udp_server_;
   /// @brief: unix socket服务端
   std::shared_ptr<unix_domain::stream::Server> unix_domain_server_;
 

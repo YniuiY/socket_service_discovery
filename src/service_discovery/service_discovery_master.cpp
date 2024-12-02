@@ -3,9 +3,12 @@
 #include "service_discovery/sd_package/sd_package.h"
 #include "udp/udp_client.h"
 #include "unix_socket/stream/server.h"
+#include <arpa/inet.h>
+#include <atomic>
 #include <cstdint>
 #include <cstring>
 #include <memory>
+#include <netinet/in.h>
 
 namespace sd {
 
@@ -94,6 +97,33 @@ void ServiceDiscoveryMaster::remote_find_service(uint32_t service_id, uint32_t i
   sd_pack->find_service->service_id = service_id;
   sd_pack->find_service->instance_id = instance_id;
   udp_client_->Send(pack);
+
+  pack = reinterpret_cast<Packet*>(recv_buffer_);
+  udp_client_->Recv(pack);
+  if (pack->header.type == PacketType::SERVICE_DISCOVERY) {
+    sd_pack = reinterpret_cast<SDPackage*>(pack->data);
+    if (sd_pack->type == SDPackageType::SD_PACKAGE_TYPE_OFFER_SERVICE) {
+      std::uint32_t service_ip = sd_pack->offer_service->service_ip;
+      std::uint16_t service_port = sd_pack->offer_service->service_port;
+      // sockaddr_in
+      in_addr addr;
+      addr.s_addr = service_ip;
+      std::string ip{inet_ntoa(addr)}; // 将ip地址转换为字符串
+      std::cout << "remote service info: " << ip << ":" << service_port << std::endl;
+      notify_remote_service_info(service_ip, service_port);
+    }
+  }
+}
+
+void ServiceDiscoveryMaster::notify_remote_service_info(uint32_t service_ip, uint16_t service_port) {
+  std::cout << "ServiceDiscoveryMaster::notify_local_service_info()\n";
+  Packet* pack = reinterpret_cast<Packet*>(send_buffer_);
+  pack->header.type = PacketType::SERVICE_DISCOVERY;
+  SDPackage* sd_pack = reinterpret_cast<SDPackage*>(pack->data);
+  sd_pack->type = SDPackageType::SD_PACKAGE_TYPE_LOC_OFFER_SERVICE;
+  sd_pack->offer_service->service_ip = service_ip;
+  sd_pack->offer_service->service_port = service_port;
+  unix_domain_server_->Send(pack);
 }
 
 

@@ -1,3 +1,0 @@
-/home/yangdi/test/netwrok/socket_service_discovery/build/CMakeFiles/run.dir
-/home/yangdi/test/netwrok/socket_service_discovery/build/CMakeFiles/edit_cache.dir
-/home/yangdi/test/netwrok/socket_service_discovery/build/CMakeFiles/rebuild_cache.dir

@@ -6,6 +6,7 @@
  */
 
 #include "udp/udp_server.h"
+#include "common/packet.h"
 
 namespace udp {
 
@@ -68,11 +69,11 @@ void UpdServer::Start() {
 
 void UpdServer::run() {
 
-  // One by One的处理数据报
-  while (true) {
-    recv_data();
-    send_data();
-  }
+  // // One by One的处理数据报
+  // while (true) {
+  //   recv_data();
+  //   send_data();
+  // }
 }
 
 void UpdServer::recv_data() {
@@ -92,21 +93,21 @@ void UpdServer::recv_data() {
                 << sizeof(Packet) + pack->header.data_size << std::endl;
       return;
     } else {
-      std::string recv_msg_str{pack->data};
-      std::cout << "Udp Server recv client msg: " << recv_msg_str << std::endl;
+      if (read_callback_) {
+        SDMessage msg;
+        msg.header.data_size = pack->header.data_size;
+        msg.header.type = pack->header.type;
+        msg.payload = pack->data;
+        read_callback_(&msg);
+      }
     }
   }
 }
 
-void UpdServer::send_data() {
+void UpdServer::Send(Packet* pack) {
   memset(send_buffer, 0, MAX_UDP_DATA_SIZE);
   int total_packs_size{0};
   int pack_header_size = sizeof(Packet::header);
-  Packet* pack = reinterpret_cast<Packet*>(send_buffer);
-  std::string msg{"Hello Client, I'm Your Network Server"};
-
-  strncpy(pack->data, msg.c_str(), msg.size());
-  pack->header.data_size = msg.size();
   total_packs_size = pack_header_size + pack->header.data_size;
 
   int send_data_size = sendto(server_socket_, pack, total_packs_size, 0,
@@ -117,7 +118,7 @@ void UpdServer::send_data() {
               << std::endl;
     return;
   } else {
-    std::cout << "Send response to client: " << msg << std::endl; 
+    std::cout << "Send response to client: " << std::endl; 
   }
 }
 

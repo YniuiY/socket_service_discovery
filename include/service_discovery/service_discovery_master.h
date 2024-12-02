@@ -38,6 +38,9 @@ class ServiceDiscoveryMaster {
   /// @brief: 没有则调用find_service()向ServiceSD发送获取服务列表请求
   void process_local_find_service(SDMessage* sd_msg);
 
+  /// @brief: 从UDP组播接收远程FindService报文，在service_map_中查找对应的服务信息，如果有则返回服务信息
+  void process_remote_find_service(SDMessage* sd_msg);
+
   /// @brief: 收到本地FindService报文并且本地服务列表中没有对应服务时，通过UDP组播向ServiceSD发送获取服务列表请求
   /// @brief: 获取到服务列表后，将服务列表保存到service_map_中
   void remote_find_service(uint32_t service_id, uint32_t instance_id);
@@ -51,9 +54,9 @@ class ServiceDiscoveryMaster {
   uint8_t recv_buffer_[MAX_BUFFER_SIZE]; // 接收缓冲区
 
   /// @brief: UDP组播客户端
-  std::shared_ptr<udp::UdpClient> udp_client_;
+  std::shared_ptr<udp::UdpClient> udp_multicast_client_;
   /// @brief: UDP组播服务端
-  std::shared_ptr<udp::UpdServer> udp_server_;
+  std::shared_ptr<udp::UpdServer> udp_multicast_server_;
   /// @brief: unix socket服务端
   std::shared_ptr<unix_domain::stream::Server> unix_domain_server_;
 

@@ -15,9 +15,9 @@ namespace sd {
 ServiceDiscoveryMaster::ServiceDiscoveryMaster(
     std::string domain_server_sd_addr,
     std::string multicast_sd_ip,
-    uint16_t multicast_sd_port) : udp_client_(nullptr), unix_domain_server_(nullptr) {
-  udp_client_ = std::make_shared<udp::UdpClient>(multicast_sd_ip, multicast_sd_port);
-  if (udp_client_ ==  nullptr) {
+    uint16_t multicast_sd_port) : udp_multicast_client_(nullptr), unix_domain_server_(nullptr) {
+  udp_multicast_client_ = std::make_shared<udp::UdpClient>(multicast_sd_ip, multicast_sd_port);
+  if (udp_multicast_client_ ==  nullptr) {
     std::cerr << "Error creating udp client" << std::endl;
     throw std::runtime_error("Error creating udp client");
   }
@@ -33,7 +33,7 @@ ServiceDiscoveryMaster::~ServiceDiscoveryMaster() {}
 
 void ServiceDiscoveryMaster::Init() {
   std::cout << "ServiceDiscoveryMaster::Init()\n";
-  udp_client_->Socket(false);
+  udp_multicast_client_->Socket(false);
   unix_domain_server_->Socket();
   unix_domain_server_->Bind();
   unix_domain_server_->Listen();
@@ -60,10 +60,10 @@ void ServiceDiscoveryMaster::process_local_find_service(SDMessage* msg) {
   if (msg->header.type == PacketType::SERVICE_DISCOVERY) {
     std::cout << "ServiceDiscoveryMaster::process_local_find_service()\n";
     SDPackage* sd_pack = reinterpret_cast<SDPackage*>(msg->payload);
+    uint32_t service_id = sd_pack->find_service->service_id;
+    uint32_t instance_id = sd_pack->find_service->instance_id;
     if (sd_pack->type == SDPackageType::SD_PACKAGE_TYPE_LOC_FIND_SERVICE) {
       std::cout << "recv local find service msg\n";
-      uint32_t service_id = sd_pack->find_service->service_id;
-      uint32_t instance_id = sd_pack->find_service->instance_id;
       std::cout << "service id: " << service_id << ", instance id: " << instance_id << std::endl;
 
       if (local_service_map_.find(service_id) != local_service_map_.end()) {
@@ -73,6 +73,11 @@ void ServiceDiscoveryMaster::process_local_find_service(SDMessage* msg) {
       } else {
         remote_find_service(service_id, instance_id);
       }
+    } else if (sd_pack->type == SDPackageType::SD_PACKAGE_TYPE_LOC_OFFER_SERVICE) {
+      std::string service_addr{reinterpret_cast<char*>(sd_pack->offer_service->loc_service_addr_)};
+      local_service_map_[service_id] = service_addr;
+      std::cout << "recv local offer service msg, service id: " << service_id
+                << ", service addr: " << service_addr << std::endl;
     }
   }
 }
@@ -96,10 +101,10 @@ void ServiceDiscoveryMaster::remote_find_service(uint32_t service_id, uint32_t i
   sd_pack->type = SDPackageType::SD_PACKAGE_TYPE_FIND_SERVICE;
   sd_pack->find_service->service_id = service_id;
   sd_pack->find_service->instance_id = instance_id;
-  udp_client_->Send(pack);
+  udp_multicast_client_->Send(pack);
 
   pack = reinterpret_cast<Packet*>(recv_buffer_);
-  udp_client_->Recv(pack);
+  udp_multicast_client_->Recv(pack);
   if (pack->header.type == PacketType::SERVICE_DISCOVERY) {
     sd_pack = reinterpret_cast<SDPackage*>(pack->data);
     if (sd_pack->type == SDPackageType::SD_PACKAGE_TYPE_OFFER_SERVICE) {
@@ -125,7 +130,5 @@ void ServiceDiscoveryMaster::notify_remote_service_info(uint32_t service_ip, uin
   sd_pack->offer_service->service_port = service_port;
   unix_domain_server_->Send(pack);
 }
-
-
 
 } // namespace sd

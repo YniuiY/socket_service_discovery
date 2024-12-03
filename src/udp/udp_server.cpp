@@ -8,6 +8,8 @@
 #include "udp/udp_server.h"
 #include "common/headers.h"
 #include "common/packet.h"
+#include <net/if.h>
+#include <netinet/in.h>
 #include <sys/types.h>
 
 namespace udp {
@@ -48,13 +50,39 @@ void UpdServer::Socket(bool is_multi_cast) {
     std::cout << "Create udp server socket success\n";
   }
   if (is_multi_cast && !multi_cast_ip_.empty()) {
-    ip_mreq mreq;
-    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-    inet_pton(AF_INET, multi_cast_ip_.c_str(), &mreq.imr_multiaddr.s_addr);
-    if (setsockopt(server_socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+    // IPV4加入多播组的方式
+    // ip_mreq mreq;
+    // mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+    // inet_pton(AF_INET, multi_cast_ip_.c_str(), &mreq.imr_multiaddr.s_addr);
+    // if (setsockopt(server_socket_, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0) {
+    //   std::cerr << "Add to multicast group failed, " << strerror(errno) << std::endl;
+    //   exit(1);
+    // }
+
+    // 兼容IPV6和IPV4的加入多播组方式
+    group_req req;
+    // 设置本地接收多播数据的网卡IP
+    // 设置成0表示让内核自动选择网卡
+    // req.gr_interface = 0;
+    // 通过网卡名称获取网卡索引
+    req.gr_interface = if_nametoindex("enp2s0");
+    sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(&req.gr_group);
+    addr->sin_family = AF_INET;
+    // 设置多播组IP
+    inet_pton(AF_INET, multi_cast_ip_.c_str(), &addr->sin_addr.s_addr);
+    if (setsockopt(server_socket_, IPPROTO_IP, MCAST_JOIN_GROUP, &req, sizeof(req)) < 0) {
       std::cerr << "Add to multicast group failed, " << strerror(errno) << std::endl;
-      exit(1);
+      throw std::runtime_error("Add to multicast group failed");
     }
+
+    // 设置禁止自己发送的多播数据包被接收
+    // 0:禁止，1:允许
+    u_char flag = 0;
+    if (setsockopt(server_socket_, IPPROTO_IP, IP_MULTICAST_LOOP, &flag, sizeof(flag)) < 0) {
+      std::cerr << "Set multicast loop failed, " << strerror(errno) << std::endl;
+      throw std::runtime_error("Set multicast loop failed");
+    }
+
     std::cout << "Access multicast group, ip: " << multi_cast_ip_ << std::endl;
   }
 }

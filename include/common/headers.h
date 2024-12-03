@@ -7,6 +7,7 @@
 #include <sys/un.h>     // unix socket相关
 #include <netinet/in.h> // ip相关，如sockaddr_in、ip_mreq
 #include <arpa/inet.h>  // inet相关，如inet_pton、inet_ntop
+#include "net/if.h"     // 网络接口相关，如if_nametoindex
 #include <iostream>
 #include <string>
 #include <thread>

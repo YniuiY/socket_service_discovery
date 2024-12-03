@@ -21,7 +21,7 @@ struct alignas(8) OfferServicePackage {
   uint32_t service_ip; // IPv4 address
   uint16_t service_port;
   uint8_t addr_size;
-  uint8_t  loc_service_addr[64];
+  uint8_t  loc_service_addr[108];
 };
 
 struct alignas(8) SDPackage {

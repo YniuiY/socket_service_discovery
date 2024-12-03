@@ -1,5 +1,6 @@
 #include "unix_socket/stream/client.h"
 #include "common/packet.h"
+#include <sys/types.h>
 
 namespace unix_domain {
 namespace stream {
@@ -96,7 +97,7 @@ int Client::Recv(Packet* pack) {
   iov[1].iov_len = pack->header.data_size;
   msg.msg_iov = iov;
 
-  int recv_pack_size = recvmsgn(sockfd_, &msg, 0);
+  ssize_t recv_pack_size = recvmsgn(sockfd_, &msg, 0);
   if (recv_pack_size < 0) {
     std::cerr << "Recv pack faild, " << strerror(errno) << std::endl;
     throw std::runtime_error("Recv pack faild");
@@ -176,7 +177,7 @@ void Client::recv_data() {
   iov[1].iov_len = pack->header.data_size;
   msg.msg_iov = iov;
 
-  int recv_pack_size = recvmsgn(sockfd_, &msg, 0);
+  ssize_t recv_pack_size = recvmsgn(sockfd_, &msg, 0);
   if (recv_pack_size < 0) {
     std::cerr << "Recv pack faild, " << strerror(errno) << std::endl;
     exit(1);

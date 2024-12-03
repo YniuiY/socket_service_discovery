@@ -101,6 +101,7 @@ int UdpClient::Recv(Packet* pack) {
   } else {
     std::cout << "Recv server response, recv data size: " << recv_data_size << std::endl;
   }
+  return recv_data_size;
 }
 
 }

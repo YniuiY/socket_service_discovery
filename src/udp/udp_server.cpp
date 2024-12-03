@@ -6,7 +6,9 @@
  */
 
 #include "udp/udp_server.h"
+#include "common/headers.h"
 #include "common/packet.h"
+#include <sys/types.h>
 
 namespace udp {
 
@@ -24,7 +26,7 @@ UpdServer::UpdServer(int const& port):server_socket_{-1} {
   server_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-UpdServer::UpdServer(int const& port, std::string const& multi_cast_ip):server_socket_{-1} {
+UpdServer::UpdServer(std::string const& multi_cast_ip, int const& port):server_socket_{-1} {
   memset(&server_addr_, 0, sizeof(server_addr_));
   server_addr_.sin_family = AF_INET;
   server_addr_.sin_port = htons(port);
@@ -67,6 +69,10 @@ void UpdServer::Start() {
   std::thread(&UpdServer::run, this).join();
 }
 
+void UpdServer::BlockRead(ReadCallback callback) {
+  read_callback_ = callback;
+}
+
 void UpdServer::run() {
 
   // // One by One的处理数据报
@@ -82,24 +88,18 @@ void UpdServer::recv_data() {
 
   socklen_t addr_len = sizeof(client_addr_);
   // 接收Packet的header部分
-  int recv_data_size = recvfrom(server_socket_, pack, MAX_UDP_DATA_SIZE, 0, (sockaddr*)&client_addr_, &addr_len);
+  ssize_t recv_data_size = recvfrom(server_socket_, pack, MAX_UDP_DATA_SIZE, 0, (sockaddr*)&client_addr_, &addr_len);
   if (recv_data_size < 0) {
     std::cerr << "Recv data failed, " << strerror(errno) << std::endl;
-    return;
+    throw std::runtime_error("Recv data failed");
   } else {
-    if (recv_data_size != sizeof(Packet) + pack->header.data_size) {
+    if (recv_data_size != (ssize_t)(sizeof(Packet) + pack->header.data_size)) {
       std::cerr << "Recv data failed, real recv data size: " << recv_data_size
                 << ", need recv size: "
                 << sizeof(Packet) + pack->header.data_size << std::endl;
-      return;
-    } else {
-      if (read_callback_) {
-        SDMessage msg;
-        msg.header.data_size = pack->header.data_size;
-        msg.header.type = pack->header.type;
-        msg.payload = pack->data;
-        read_callback_(&msg);
-      }
+      throw std::runtime_error("Recv data failed, size not match");
+    } else if (read_callback_) {
+      read_callback_(pack);
     }
   }
 }

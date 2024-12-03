@@ -51,7 +51,7 @@ int main (int argc, char* argv[]) {
     bool is_access_multi_cast{true};
     // udp::UpdServer server(port);
     // 加入多播组的服务端，具备了接收多播报文的能力
-    udp::UpdServer server(port, MULTI_CAST_IP);
+    udp::UpdServer server(MULTI_CAST_IP, port);
     server.Socket(is_access_multi_cast);
     server.Bind();
     server.Start();

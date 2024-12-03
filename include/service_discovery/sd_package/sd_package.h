@@ -24,10 +24,8 @@ struct alignas(8) OfferServicePackage {
 
 struct alignas(8) SDPackage {
   SDPackageType type;
-  union {
-    FindServicePackage find_service[0];
-    OfferServicePackage offer_service[0];
-  };
+  FindServicePackage find_service[0];
+  OfferServicePackage offer_service[0];
 };
 
 #endif // SD_PACKAGE_H

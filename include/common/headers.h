@@ -17,6 +17,6 @@
 #include "common/packet.h"
 #include "common/transfer.h"
 
-using ReadCallback = std::function<void(SDMessage*)>;
+using ReadCallback = std::function<void(Packet*)>;
 
 #endif //HEADERS_H_

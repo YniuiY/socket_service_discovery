@@ -4,14 +4,14 @@
 
 namespace tcp {
 
-Server::Server(): packet_{nullptr}, epoll_fd_{-1} {
+Server::Server() : epoll_fd_{-1}, packet_{nullptr} {
   memset(&server_addr_, 0, sizeof(server_addr_));
   server_addr_.sin_family = AF_INET;
   server_addr_.sin_port = htons(51015);
   server_addr_.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
-Server::Server(int port): packet_{nullptr}, epoll_fd_{-1} {
+Server::Server(int port) : epoll_fd_{-1}, packet_{nullptr} {
   memset(&server_addr_, 0, sizeof(server_addr_));
   server_addr_.sin_family = AF_INET;
   server_addr_.sin_port = htons(port);
@@ -220,7 +220,7 @@ int Server::in_epoll_recv(int socket_fd) {
   packet_ = (Packet*)realloc(packet_, total_pack_size);
   // 接收pack的数据部分
   int recv_pack_data_size = recvn(socket_fd, packet_->data, packet_->header.data_size, 0);
-  if (recv_pack_data_size != packet_->header.data_size) {
+  if (recv_pack_data_size != (int)packet_->header.data_size) {
     std::cout << "[in_epoll_recv] recv pack data failed, need recv size: "
               << packet_->header.data_size
               << ", real recv size: " << recv_pack_data_size << std::endl;
@@ -228,11 +228,7 @@ int Server::in_epoll_recv(int socket_fd) {
   }
   
   if (read_callback_) {
-    SDMessage sd_msg;
-    sd_msg.header.data_size = packet_->header.data_size;
-    sd_msg.header.type = packet_->header.type;
-    sd_msg.payload = packet_->data;
-    read_callback_(&sd_msg);
+    read_callback_(packet_);
   }
   return ret;
 }
@@ -281,11 +277,7 @@ int Server::in_epoll_recvmsg(int socket_fd) {
     throw std::runtime_error("TCP recv pack data failed");
   }
   if (read_callback_) {
-    SDMessage sd_msg;
-    sd_msg.header.data_size = packet_->header.data_size;
-    sd_msg.header.type = packet_->header.type;
-    sd_msg.payload = packet_->data;
-    read_callback_(&sd_msg);
+    read_callback_(packet_);
   }
 
   return ret;

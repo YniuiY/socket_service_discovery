@@ -10,6 +10,7 @@ namespace sd {
 class SDServer {
  public:
   static const int MAX_BUFFER_SIZE = 65535;
+  static const std::string local_service_path;;
   SDServer(std::string master_link_info, uint32_t service_id);
   ~SDServer();
   void Run();

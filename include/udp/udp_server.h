@@ -21,7 +21,7 @@ class UpdServer {
  public:
   UpdServer();
   explicit UpdServer(int const& port);
-  UpdServer(int const& port, std::string const& ip);
+  UpdServer(std::string const& ip, int const& port);
   ~UpdServer();
 
   void Socket(bool is_multi_cast);

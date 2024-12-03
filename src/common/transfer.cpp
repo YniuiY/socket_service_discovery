@@ -1,11 +1,13 @@
 #include "common/transfer.h"
 
 #include "common/headers.h"
+#include <cstdint>
+#include <sys/types.h>
 
 int recvn(int fd, void* vptr, int data_size, int flag) {
   int nleft = data_size;
   ssize_t nread = 0;
-  void* ptr = vptr;
+  uint8_t* ptr = reinterpret_cast<uint8_t*>(vptr);
 
   while (nleft > 0) {
     if ((nread = recv(fd, ptr, nleft, flag)) < 0) {
@@ -32,7 +34,7 @@ int recvn(int fd, void* vptr, int data_size) {
 int sendn(int fd, void* vptr, int data_size, int flag) {
   int nleft = data_size;
   ssize_t nsended = 0;
-  void* ptr = vptr;
+  uint8_t* ptr = reinterpret_cast<uint8_t*>(vptr);
 
   while (nleft > 0) {
     if ((nsended = send(fd, vptr, nleft, 0)) <= 0) {
@@ -50,6 +52,6 @@ int sendn(int fd, void* vptr, int data_size, int flag) {
   return data_size;
 }
 
-int recvmsgn(int sockfd, msghdr* msg, int flag) {
+ssize_t recvmsgn(int sockfd, msghdr* msg, int flag) {
   return recvmsg(sockfd, msg, MSG_WAITALL);
 }

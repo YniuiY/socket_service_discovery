@@ -2,6 +2,7 @@
 #define TRANSFER_H_
 
 #include <sys/socket.h>
+#include <sys/types.h>
 
 /// @brief 循环接收data_size字节的数据，还可以用flag为MSG_WAITALL的普通recv代替
 /// @param fd socket描述符
@@ -31,6 +32,6 @@ int sendn(int fd, void* vptr, int data_size, int flag);
 /// @param msg 存储接收到数据的结构体指针
 /// @param flag 无论传入什么都指定为MSG_WAITALL
 /// @return 返回实际接收数据的字节数
-int recvmsgn(int sockfd, msghdr* msg, int flag);
+ssize_t recvmsgn(int sockfd, msghdr* msg, int flag);
 
 #endif //TRANSFER_H_

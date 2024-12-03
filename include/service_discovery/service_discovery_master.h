@@ -12,6 +12,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <tuple>
 #include <unistd.h>
 
 #include "common/packet.h"
@@ -36,10 +37,10 @@ class ServiceDiscoveryMaster {
  private:
   /// @brief: 从UDS接收本地FindService报文，在service_map_中查找对应的服务信息，如果有则返回服务信息
   /// @brief: 没有则调用find_service()向ServiceSD发送获取服务列表请求
-  void process_local_find_service(SDMessage* sd_msg);
+  void process_local_find_service(Packet* sd_pack);
 
   /// @brief: 从UDP组播接收远程FindService报文，在service_map_中查找对应的服务信息，如果有则返回服务信息
-  void process_remote_find_service(SDMessage* sd_msg);
+  void process_remote_find_service(Packet* sd_pack);
 
   /// @brief: 收到本地FindService报文并且本地服务列表中没有对应服务时，通过UDP组播向ServiceSD发送获取服务列表请求
   /// @brief: 获取到服务列表后，将服务列表保存到service_map_中
@@ -63,7 +64,7 @@ class ServiceDiscoveryMaster {
   /// @brief: 远程服务列表 <service_id, <service_ip, service_port>>
   std::map<uint32_t, std::pair<std::string, std::uint16_t>> remote_service_map_;
   /// @brief: 本地服务列表 <service_id, service_link_info>
-  std::map<uint32_t, std::string> local_service_map_;
+  std::map<uint32_t, std::tuple<std::string, uint32_t, uint16_t>> local_service_map_;
 };
 
 } // namespace sd

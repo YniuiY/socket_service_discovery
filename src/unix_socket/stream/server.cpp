@@ -206,11 +206,7 @@ int Server::in_epoll_recvmsg(int sockfd) {
     std::cout << "Recvmsg pack success, pack msg: " << pack_msg << std::endl;
     if (read_callback_) {
       std::cout << "Call read callback" << std::endl;
-      SDMessage sd_msg;
-      sd_msg.header.data_size = pack->header.data_size;
-      sd_msg.header.type = pack->header.type;
-      sd_msg.payload = pack->data;
-      read_callback_(&sd_msg);
+      read_callback_(pack);
     }
   }
   return recv_pack_size;

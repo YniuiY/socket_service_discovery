@@ -11,9 +11,12 @@ namespace sd {
 const std::string SDServer::local_service_path{"/tmp/service_1.sock"};
 
 SDServer::SDServer(std::string master_link_info, uint32_t service_id)
-    : master_link_info_(master_link_info), service_id_(service_id) {
-  uds_client_ =
-      std::make_shared<unix_domain::stream::Client>(master_link_info_);
+    : master_link_info_(master_link_info),
+      service_id_(service_id) {
+  uds_client_ = std::make_shared<unix_domain::stream::Client>(master_link_info_);
+}
+
+void SDServer::Init() {
   uds_client_->Socket();
   uds_client_->Connect();
 }
@@ -27,7 +30,7 @@ void SDServer::Run() {
   sd_pack->find_service->instance_id = 0;
   sd_pack->offer_service->service_ip = inet_addr("10.1.2.147");
   sd_pack->offer_service->service_port = 51015;
-  strncpy(reinterpret_cast<char *>(sd_pack->offer_service->loc_service_addr_),
+  strncpy(reinterpret_cast<char *>(sd_pack->offer_service->loc_service_addr),
           local_service_path.c_str(), local_service_path.size());
   packet->header.data_size = sizeof(SDPackage);
   uds_client_->Send(packet);

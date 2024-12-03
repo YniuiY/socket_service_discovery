@@ -89,7 +89,7 @@ void ServiceDiscoveryMaster::process_local_find_service(Packet* msg) {
         remote_find_service(service_id, instance_id);
       }
     } else if (sd_pack->type == SDPackageType::SD_PACKAGE_TYPE_LOC_OFFER_SERVICE) {
-      std::string service_addr{reinterpret_cast<char*>(sd_pack->offer_service->loc_service_addr_)};
+      std::string service_addr{reinterpret_cast<char*>(sd_pack->offer_service->loc_service_addr)};
       uint32_t service_ip = sd_pack->offer_service->service_ip;
       uint16_t service_port = sd_pack->offer_service->service_port;
       local_service_map_[service_id] = std::make_tuple(service_addr, service_ip, service_port);
@@ -105,7 +105,8 @@ void ServiceDiscoveryMaster::notify_local_service_info(std::string service_addr)
   pack->header.type = PacketType::SERVICE_DISCOVERY;
   SDPackage* sd_pack = reinterpret_cast<SDPackage*>(pack->data);
   sd_pack->type = SDPackageType::SD_PACKAGE_TYPE_LOC_OFFER_SERVICE;
-  strcpy(reinterpret_cast<char *>(sd_pack->offer_service->loc_service_addr_), service_addr.c_str());
+  sd_pack->offer_service->is_local = true;
+  strcpy(reinterpret_cast<char *>(sd_pack->offer_service->loc_service_addr), service_addr.c_str());
   unix_domain_server_->Send(pack);
 }
 
@@ -143,6 +144,7 @@ void ServiceDiscoveryMaster::notify_remote_service_info(uint32_t service_ip, uin
   pack->header.type = PacketType::SERVICE_DISCOVERY;
   SDPackage* sd_pack = reinterpret_cast<SDPackage*>(pack->data);
   sd_pack->type = SDPackageType::SD_PACKAGE_TYPE_LOC_OFFER_SERVICE;
+  sd_pack->offer_service->is_local = false;
   sd_pack->offer_service->service_ip = service_ip;
   sd_pack->offer_service->service_port = service_port;
   unix_domain_server_->Send(pack);

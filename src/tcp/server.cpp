@@ -37,8 +37,8 @@ void Server::Socket() {
 }
 
 void Server::Bind() {
-  bind(sock_, (sockaddr*)&(server_addr_), sizeof(server_addr_));
-  std::cout << "Bind server ip and port to socket fd\n";
+  int ret = bind(sock_, (sockaddr*)&(server_addr_), sizeof(server_addr_));
+  std::cout << "Bind server ip and port to socket fd, ret: " << ret << std::endl;
 }
 
 void Server::Listen() {

@@ -10,7 +10,6 @@
 #include <arpa/inet.h>  // inet相关，如inet_pton、inet_ntop
 #include <cstring>
 #include <string>
-#include <iostream>
 #include <map>
 #include <tuple>
 #include <unistd.h>
@@ -19,7 +18,6 @@
 #include "udp/udp_client.h" // udp客户端
 #include "udp/udp_server.h" // udp服务端
 #include "unix_socket/stream/server.h" // unix socket服务端
-#include "sd_package/sd_package.h" // 服务发现协议包
 
 namespace sd {
 

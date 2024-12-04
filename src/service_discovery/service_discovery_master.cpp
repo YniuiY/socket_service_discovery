@@ -5,7 +5,6 @@
 #include "udp/udp_server.h"
 #include "unix_socket/stream/server.h"
 #include <arpa/inet.h>
-#include <atomic>
 #include <cstdint>
 #include <cstring>
 #include <memory>

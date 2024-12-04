@@ -34,8 +34,8 @@ void Server::Socket() {
 
 void Server::Bind() {
   unlink(link_info_.c_str());
-  bind(sockfd_, (sockaddr*)&server_addr_, sizeof(server_addr_));
-  std::cout << "Bind socket and link info\n";
+  int ret = bind(sockfd_, (sockaddr*)&server_addr_, sizeof(server_addr_));
+  std::cout << "Bind socket and link info, ret:" << ret << std::endl;
 }
 
 void Server::Listen() {

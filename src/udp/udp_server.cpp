@@ -88,8 +88,8 @@ void UpdServer::Socket(bool is_multi_cast) {
 }
 
 void UpdServer::Bind() {
-  bind(server_socket_, (sockaddr*)&server_addr_, sizeof(server_addr_));
-  std::cout << "Upd server bind\n";
+  int ret = bind(server_socket_, (sockaddr*)&server_addr_, sizeof(server_addr_));
+  std::cout << "Upd server bind, ret: " << ret << std::endl;
 }
 
 void UpdServer::Start() {
